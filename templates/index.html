@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Restaurant Explorer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" contents="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <script>
+        function clearCheckboxes() {
+            var checkboxes = document.querySelectorAll('.scrolling-checkbox input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+        }
+
+        function clearAllInputs() {
+            document.getElementById('restaurant-name').value = '';
+            document.getElementById('user-comments').value = '';
+
+            document.getElementById('rating').selectedIndex = 0;
+            document.getElementById('cuisine').selectedIndex = 0;
+            document.getElementById('price').selectedIndex = 0;
+
+            var checkboxes = document.querySelectorAll('.scrolling-checkbox input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+        }
+
+        function confirmShowAll() {
+            if (confirm("Please confirm that you want to show all the entries.")) {
+                window.location.href = "{{ url_for('show_all') }}";
+            }
+        }
+
+        function editRestaurant(restaurant) {
+            document.getElementById('restaurant-id').value = restaurant.id;
+            document.getElementById('restaurant-name').value = restaurant.name;
+            document.getElementById('rating').value = restaurant.rating;
+            document.getElementById('cuisine').value = restaurant.cuisine;
+            document.getElementById('price').value = restaurant.price;
+
+            clearCheckboxes();
+
+            if (restaurant.ammenities) {
+                const ammenities = restaurant.ammenities.split(', ');
+                ammenities.forEach(function(ammenity) {
+                    document.querySelector(`.scrolling-checkbox input[value="${ammenity}"]`).checked = true;
+                });
+            }
+
+            document.getElementById('user-comments').value = restaurant.comments;
+
+            document.getElementById('form-title').textContent = 'Edit the Restaurant';
+            document.getElementById('submit-button').textContent = 'Finish';
+            document.getElementById('cancel-edit-button').style.display = 'inline-block';
+        }
+
+        function cancelEdit() {
+            document.getElementById('restaurant-id').value = '';
+            clearAllInputs();
+            document.getElementById('form-title').textContent = 'Add a Restaurant';
+            document.getElementById('submit-button').textContent = 'Submit';
+            document.getElementById('cancel-edit-button').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <table>
+        <h1>Restaurant Explorer</h1>
+        <tr>
+            <td>
+                <details>
+                    <summary>{{ title }}</summary>
+                    <div>{{ contents }}</div>
+                </details>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong id="form-title">{{ add_title }}</strong>
+                <div>{{ note }}</div>
+                <form method="POST" action="/">
+                    <input type="hidden" id="restaurant-id" name="restaurant_id" value="">
+                    <div>
+                        <input type="text" id="restaurant-name" name="restaurant_name" required placeholder="Restaurant Name">
+                        <button type="button" onclick="document.getElementById('restaurant-name').value=''">Clear</button>
+                    </div>
+                    <div>
+                        <select id="rating" name="rating" required>
+                            <option value="" disabled selected>Rating</option>
+                            <option value="1">1 - Poor</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="3">3 - Good</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="5">5 - Excellent</option>
+                        </select>
+                        <button type="button" onclick="document.getElementById('rating').selectedIndex = 0;">Clear</button>
+                    </div>
+                    <div>
+                        <select id="cuisine" name="cuisine" required>
+                            <option value="" disabled selected>Cuisine</option>
+                            <option value="Asian">Asian</option>
+                            <option value="American">American</option>
+                            <option value="Mexican">Mexican</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Thai">Thai</option>
+                            <option value="Hawaiian">Hawaiian</option>
+                            <option value="Vietnamese">Vietnamese</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Korean">Korean</option>
+                            <option value="Mediterranean">Mediterranean</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="European">European</option>
+                            <option value="Indian">Indian</option>
+                            <option value="African">African</option>
+                        </select>
+                        <button type="button" onclick="document.getElementById('cuisine').selectedIndex = 0;">Clear</button>
+                    </div>
+                    <div>
+                        <select id="price" name="price" required>
+                            <option value="" disabled selected>Price</option>
+                            <option value="$">$</option>
+                            <option value="$$">$$</option>
+                            <option value="$$$">$$$</option>
+                        </select>
+                        <button type="button" onclick="document.getElementById('price').selectedIndex = 0;">Clear</button>
+                    </div>
+                    <label for="ammenities" class="checkbox-title">Ammenities (optional)</label>
+                    <div class="form-group scrolling-checkbox-container">
+                        <div class="scrolling-checkbox">
+                            <label><input type="checkbox" name="ammenities" value="Valet Parking"> Valet Parking</label>
+                            <label><input type="checkbox" name="ammenities" value="Outdoor Seating"> Outdoor Seating</label>
+                            <label><input type="checkbox" name="ammenities" value="Dogs Allowed"> Dogs Allowed</label>
+                            <label><input type="checkbox" name="ammenities" value="Free WiFi"> Free WiFi</label>
+                            <label><input type="checkbox" name="ammenities" value="Street Parking"> Street Parking</label>
+                            <label><input type="checkbox" name="ammenities" value="Takes Reservations"> Takes Reservations</label>
+                            <label><input type="checkbox" name="ammenities" value="Accepts Apple Pay"> Accepts Apple Pay</label>
+                            <label><input type="checkbox" name="ammenities" value="Garage Parking"> Garage Parking</label>
+                            <label><input type="checkbox" name="ammenities" value="Valet Parking"> Valet Parking</label>
+                            <label><input type="checkbox" name="ammenities" value="Open 24 Hours"> Open 24 Hours</label>
+                            <label><input type="checkbox" name="ammenities" value="Live Music"> Live Music</label>
+                            <label><input type="checkbox" name="ammenities" value="Happy Hour"> Happy Hour</label>
+                            <label><input type="checkbox" name="ammenities" value="Parking Validation"> Parking Validation</label>
+                            <label><input type="checkbox" name="ammenities" value="Full Bar"> Full Bar</label>
+                        </div>
+                    </div>
+                    <button type="button" onclick="clearCheckboxes()">Clear</button>
+                    <div>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flashes">
+                                    {% for category, message in messages %}
+                                        {% if category == 'form_error' %}
+                                            <p class="flash-message">{{ message }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <textarea id="user-comments" name="user-comments" placeholder="Comments (Optional. Enter at least 20 characters at a minimum or none at all.)"></textarea>
+                        <button type="button" onclick="document.getElementById('user-comments').value=''">Clear</button>
+                    </div>
+                    <button type="submit" id="submit-button">Submit</button>
+                    <button type="button" onclick="clearAllInputs()">Clear All</button>
+                    <button type="button" id="cancel-edit-button" style="display:none;" onclick="cancelEdit()">Cancel Edit</button>
+                </form>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <strong>{{ view_title }}</strong>
+                <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                            {% for category, message in messages %}
+                                {% if category == 'delete_success' or category == 'delete_error' %}
+                                    <p class="flash-message">{{ message }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                </div>
+                <table>
+                    <tr>
+                        <th>Delete</th>
+                        <th>Edit</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                        <th>Cuisine</th>
+                        <th>Price</th>
+                        <th>Ammenities</th>
+                        <th>Comments</th>
+                    </tr>
+                    {% for restaurant in restaurants %}
+                    <tr>
+                        <td>
+                            <form method="POST" action="/delete/{{ restaurant.id }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button type="button" onclick='editRestaurant({{ restaurant|tojson|safe }})'>Edit</button>
+                        </td>
+                        <td>{{ restaurant.name }}</td>
+                        <td>{{ restaurant.rating }}</td>
+                        <td>{{ restaurant.cuisine }}</td>
+                        <td>{{ restaurant.price }}</td>
+                        <td>{{ restaurant.ammenities }}</td>
+                        <td>{{ restaurant.comments }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                {% if not random_selection %}
+                <div>
+                    {% if page > 1 %}
+                        <a href="{{ url_for('home', page=page-1) }}">Previous</a>
+                    {% endif %}
+                    <span>Page {{ page }} of {{ total_pages }}</span>
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('home', page=page+1) }}">Next</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div>
+                    <button type="button" onclick="confirmShowAll()">Show All Entries</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <form method="POST" action="/random" class="submit-form-random">
+        {{ end_note }}
+        <button type="submit" class="submit-random-button">Let's Go!</button>
+    </form>
+
+</body>
+</html>

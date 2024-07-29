@@ -1,0 +1,99 @@
+body {
+    font-family: "Roboto", sans-serif;
+}
+
+
+table {
+    max-width: 800px; 
+    max-height: 800px;
+    margin: 0 auto; 
+    border-collapse: collapse;
+}
+
+
+button {
+    font-family: "Roboto", sans-serif;
+    cursor: pointer;
+    width: auto;
+}
+
+h1 {
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500; 
+    font-size: 90;
+}
+th {
+    padding: 10px;
+}
+
+td {
+    border: 1px solid #ddd; 
+    text-align: center; 
+    padding: 9px;
+}
+
+form {
+    text-align: center;
+    margin-top: 5px; 
+}
+
+
+div {
+    margin-top: 10px;
+}
+
+label {
+    margin-top: 10px;
+    font-size: 14px;
+    display: flex;
+}
+
+textarea {
+    display: flex;
+    min-height: 100px;
+    min-width: 500px;
+    display: table-column;
+    font-family: "Roboto", sans-serif;
+}
+
+
+.scrolling-checkbox-container {
+    max-height: 100px; 
+    overflow-y: auto; 
+    border: 1px solid #ddd; 
+    display: inline-block;
+    padding: 5px; 
+    margin-top: 0;
+}
+
+.scrolling-checkbox {
+    display: flex;
+    flex-direction: column;
+}
+
+.scrolling-checkbox label {
+    margin-top: 0;                                                                                                                                                                                                                                                                                                                                                                                                  
+    gap: 5px; 
+}
+
+.checkbox-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.error-message {
+    color: red; 
+    font-size: 10px;
+}
+
+.flash-message {
+    color: red; 
+    margin-bottom: 10px;
+}
+
+.submit-random-button {
+    width: auto; 
+    display: block; 
+    margin: 10px auto;
+}
