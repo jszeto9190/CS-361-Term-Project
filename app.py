@@ -22,6 +22,37 @@ def get_db_connection():
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    try:
+        # Get public IP of the client
+        public_ip_response = requests.get('https://api.ipify.org?format=json')
+        public_ip = public_ip_response.json().get('ip')
+
+        microservice_c_base_url = "https://microservice-c-cs361-b9c8c47e5e75.herokuapp.com"
+        
+        # Pass the public IP to Microservice C to get the correct location
+        location_response = requests.get(f"{microservice_c_base_url}/get-location", params={"ip": public_ip})
+        location_data = location_response.json()
+        
+        # Pass the same public IP to Microservice C to get the weather data
+        weather_response = requests.get(f"{microservice_c_base_url}/get-weather", params={"ip": public_ip})
+        weather_data = weather_response.json()
+
+        city = location_data.get("city", "Unknown City")
+        region = location_data.get("region", "Unknown State")
+        postal = location_data.get("postal", "Unknown ZIP Code")
+        country = location_data.get("country", "Unknown Country")
+        weather_description = weather_data["weather"]["weather"][0]["description"]
+        temperature = weather_data["weather"]["main"]["temp"]
+
+    except Exception as e:
+        print(f"Failed to retrieve location or weather data: {e}")
+        city = "Unavailable"
+        country = "Unavailable"
+        postal = "Unavailable"
+        region = "Unavailable"
+        weather_description = "Unavailable"
+        temperature = "Unavailable"
+
     if request.method == "POST":
         if "send_email" in request.form:  # Check if the form is for sending an email
             restaurant_id = request.form.get("restaurant_id")
@@ -136,8 +167,24 @@ def home():
     note = "Note: Add a restaurant entry and see it show up under 'View Your Restaurants' below. Ammenities and Comments are optional when adding a restaurant."
     end_note = "Can't Decide? Let us pick for you."
 
-    return render_template('index.html', title=title, contents=contents, note=note, end_note=end_note, add_title=add_title, view_title=view_title, restaurants=restaurants, page=page, total_pages=total_pages)
-
+    return render_template(
+    'index.html',
+    title=title,
+    contents=contents,
+    note=note,
+    end_note=end_note,
+    add_title=add_title,
+    view_title=view_title,
+    restaurants=restaurants,
+    page=page,
+    total_pages=total_pages,
+    city=city,
+    country=country,
+    region=region,
+    postal=postal,
+    weather_description=weather_description,
+    temperature=temperature
+)
 
 @app.route("/delete/<int:restaurant_id>", methods=["POST"])
 def delete_restaurant(restaurant_id):

@@ -73,6 +73,15 @@
         <h1>Restaurant Explorer</h1>
         <tr>
             <td>
+            <!-- Location and Weather Section -->
+            <div class="location-weather">
+                <p><strong>Your Current Location:</strong> {{ city }}, {{region}}, {{postal}}, {{ country }}</p>
+                <p><strong>Weather:</strong> {{ weather_description }}, {{ temperature }}°F</p>
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <details>
                     <summary>{{ title }}</summary>
                     <div>{{ contents }}</div>
