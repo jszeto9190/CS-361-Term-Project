@@ -197,6 +197,7 @@
                         <th>Price</th>
                         <th>Ammenities</th>
                         <th>Comments</th>
+                        <th>Learn More</th>
                     </tr>
                     {% for restaurant in restaurants %}
                     <tr>
@@ -206,7 +207,7 @@
                             </form>
                         </td>
                         <td>
-                            <button type="button" onclick='editRestaurant({{ restaurant|tojson|safe }})'>Edit</button>
+                            <button type="button" onclick="editRestaurant({{ restaurant|tojson|safe }})">Edit</button>
                         </td>
                         <td>{{ restaurant.name }}</td>
                         <td>{{ restaurant.rating }}</td>
@@ -214,6 +215,18 @@
                         <td>{{ restaurant.price }}</td>
                         <td>{{ restaurant.ammenities }}</td>
                         <td>{{ restaurant.comments }}</td>
+                        <td>
+                            <form method="GET" action="{{ url_for('get_restaurant_data', restaurant_id=restaurant.id) }}">
+                                <button type="submit">Go</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="/">
+                                <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
+                                <input type="email" name="email" placeholder="Enter email" required>
+                                <button type="submit" name="send_email">Send</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>

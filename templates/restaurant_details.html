@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ restaurant_data.name }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" contents="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>{{ restaurant_data.name }}</h1>
+    <p><strong>Address:</strong> {{ restaurant_data.formatted_address }}</p>
+    <p><strong>Phone Number:</strong> {{ restaurant_data.phone_number }}</p>
+    <p><strong>Rating:</strong> {{ restaurant_data.rating }} / 5 ({{ restaurant_data.user_ratings_total }} ratings)</p>
+    <p><strong>Website:</strong> <a href="{{ restaurant_data.website }}">{{ restaurant_data.website }}</a></p>
+
+    <h2>Opening Hours</h2>
+    <ul>
+        {% for hour in restaurant_data.hours %}
+            <li>{{ hour }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Reviews</h2>
+    <div>
+        {% for review in restaurant_data.reviews %}
+            <div>
+                <p><strong>{{ review.author_name }}</strong> ({{ review.relative_time_description }})</p>
+                <p>Rating: {{ review.rating }} / 5</p>
+                <p>{{ review.text }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <h2>Photo</h2>
+    {% if photo_url %}
+        <img src="{{ photo_url }}" alt="Photo of {{ restaurant_data.name }}">
+        <p>Photo by: {{ restaurant_data.photo.html_attributions[0] | safe }}</p>
+    {% else %}
+        <p>No photo available for this restaurant.</p>
+    {% endif %}
+</body>
+</html>
