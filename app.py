@@ -28,6 +28,7 @@ def home():
         public_ip = public_ip_response.json().get('ip')
 
         microservice_c_base_url = "https://microservice-c-cs361-b9c8c47e5e75.herokuapp.com"
+        microservice_d_base_url = "https://microservice-d-cs361-00de890043f8.herokuapp.com"
         
         # Pass the public IP to Microservice C to get the correct location
         location_response = requests.get(f"{microservice_c_base_url}/get-location", params={"ip": public_ip})
@@ -43,6 +44,38 @@ def home():
         country = location_data.get("country", "Unknown Country")
         weather_description = weather_data["weather"]["weather"][0]["description"]
         temperature = weather_data["weather"]["main"]["temp"]
+
+        # Fetch the nearest location for all restaurants in the database
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM restaurants")
+        restaurants = cursor.fetchall()
+
+        for restaurant in restaurants:
+            restaurant_id = restaurant['id']
+            restaurant_name = restaurant['name']
+
+            # Call Microservice D to get the location within 5 mi radius
+            nearest_location_response = requests.get(
+                f"{microservice_d_base_url}/nearest-restaurant",
+                params={"restaurant_name": restaurant_name, "zip_code": postal}
+            )
+            if nearest_location_response.status_code == 200:
+                nearest_location_data = nearest_location_response.json()
+                nearest_location_address = nearest_location_data.get("address", "Unknown Address")
+                
+                # Update the nearest_location in the database
+                cursor.execute("""
+                    UPDATE restaurants
+                    SET nearest_location = %s
+                    WHERE id = %s
+                """, (nearest_location_address, restaurant_id))
+            else:
+                print(f"Failed to retrieve nearest location for {restaurant_name}")
+
+        connection.commit()
+        cursor.close()
+        connection.close()
 
     except Exception as e:
         print(f"Failed to retrieve location or weather data: {e}")
@@ -80,7 +113,8 @@ def home():
                 "cuisine": restaurant['cuisine'],
                 "price": restaurant['price'],
                 "ammenities": restaurant['ammenities'],
-                "comments": restaurant['comments']
+                "comments": restaurant['comments'],
+                "nearest_location": restaurant['nearest_location']
             }
 
             # Send data to Microservice B

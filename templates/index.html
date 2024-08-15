@@ -206,7 +206,9 @@
                         <th>Price</th>
                         <th>Ammenities</th>
                         <th>Comments</th>
+                        <th>Location Within 5 mi Radius</th>
                         <th>Learn More</th>
+                        <th>Email Information to Me</th>
                     </tr>
                     {% for restaurant in restaurants %}
                     <tr>
@@ -224,6 +226,7 @@
                         <td>{{ restaurant.price }}</td>
                         <td>{{ restaurant.ammenities }}</td>
                         <td>{{ restaurant.comments }}</td>
+                        <td>{{ restaurant.nearest_location }}</td>
                         <td>
                             <form method="GET" action="{{ url_for('get_restaurant_data', restaurant_id=restaurant.id) }}">
                                 <button type="submit">Go</button>
